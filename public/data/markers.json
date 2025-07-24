@@ -1,0 +1,66 @@
+{
+  "markers": [
+    {
+      "id": 1,
+      "position": [37.5665, 126.978],
+      "title": "서울 중심",
+      "description": "서울특별시 중구 명동",
+      "category": "landmark"
+    },
+    {
+      "id": 2,
+      "position": [37.5755, 126.9769],
+      "title": "광화문",
+      "description": "조선왕조의 정궁인 경복궁의 정문",
+      "category": "historic"
+    },
+    {
+      "id": 3,
+      "position": [37.5662, 126.9779],
+      "title": "명동",
+      "description": "서울의 대표적인 쇼핑 및 관광지",
+      "category": "shopping"
+    },
+    {
+      "id": 4,
+      "position": [37.5717, 126.9895],
+      "title": "동대문",
+      "description": "24시간 쇼핑과 패션의 메카",
+      "category": "shopping"
+    },
+    {
+      "id": 5,
+      "position": [37.5596, 126.9748],
+      "title": "남산타워",
+      "description": "서울의 상징적인 랜드마크",
+      "category": "landmark"
+    },
+    {
+      "id": 6,
+      "position": [37.5663, 126.9909],
+      "title": "동대문디자인플라자",
+      "description": "현대적인 건축물과 디자인 문화공간",
+      "category": "culture"
+    },
+    {
+      "id": 7,
+      "position": [37.5668, 126.9784],
+      "title": "명동성당",
+      "description": "한국 가톨릭의 대표 성당",
+      "category": "culture"
+    },
+    {
+      "id": 8,
+      "position": [37.565, 126.991],
+      "title": "청계천",
+      "description": "서울 도심의 복원된 하천",
+      "category": "tourism"
+    }
+  ],
+  "mapConfig": {
+    "center": [37.5665, 126.978],
+    "defaultZoom": 13,
+    "minZoom": 10,
+    "maxZoom": 18
+  }
+}
