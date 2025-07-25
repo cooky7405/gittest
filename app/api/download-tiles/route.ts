@@ -175,7 +175,11 @@ export async function POST(request: NextRequest) {
     // 다운로드 타입에 따른 설정
     if (downloadType === "seoul_complete") {
       // 서울 전체 지역 완전 다운로드
-      return await downloadSeoulComplete(startZoom || 10, endZoom || 18);
+      const result = await downloadSeoulComplete(
+        startZoom || 10,
+        endZoom || 18
+      );
+      return NextResponse.json(result);
     }
 
     // 기본 다운로드 (기존 방식)

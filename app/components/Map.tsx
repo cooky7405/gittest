@@ -68,6 +68,7 @@ export default function Map() {
         setMap(null);
       }
     };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isClient, zoom]);
 
   const handleZoomIn = () => {

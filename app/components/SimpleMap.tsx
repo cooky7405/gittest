@@ -80,6 +80,7 @@ export default function SimpleMap() {
         setMap(null);
       }
     };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isLoaded, zoom]);
 
   const handleZoomIn = () => {

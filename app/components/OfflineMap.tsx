@@ -546,6 +546,7 @@ export default function OfflineMap() {
         setMap(null);
       }
     };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isLoaded, mapData]);
 
   // 타일 번호 표시 상태 변경 시 오버레이 업데이트
@@ -561,6 +562,7 @@ export default function OfflineMap() {
         }
       });
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [showTileNumbers, map]);
 
   // 타일 좌표 계산 함수
