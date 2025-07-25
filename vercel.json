@@ -1,0 +1,15 @@
+{
+  "buildCommand": "npm run build",
+  "devCommand": "npm run dev",
+  "installCommand": "npm install",
+  "framework": "nextjs",
+  "env": {
+    "NODE_ENV": "production"
+  },
+  "regions": ["icn1"],
+  "functions": {
+    "app/api/download-tiles/route.ts": {
+      "maxDuration": 30
+    }
+  }
+}
