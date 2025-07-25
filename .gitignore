@@ -27,6 +27,16 @@ yarn-error.log*
 
 # local env files
 .env*.local
+.env
+
+# 타일 파일들 (용량이 커서 Git에서 제외)
+public/tiles/**/*.png
+public/tiles/**/*.jpg
+public/tiles/**/*.jpeg
+# 하지만 폴더 구조는 포함
+!public/tiles/
+!public/tiles/**/.gitkeep
+!public/tiles/**/README.md
 
 # vercel
 .vercel

@@ -2,11 +2,18 @@
   "name": "gistest",
   "version": "0.1.0",
   "private": true,
+  "engines": {
+    "node": ">=18.0.0",
+    "npm": ">=7.0.0"
+  },
   "scripts": {
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "install:deps": "npm install --legacy-peer-deps",
+    "setup": "npm run install:deps && npm run setup:tiles",
+    "setup:tiles": "mkdir -p public/tiles"
   },
   "dependencies": {
     "@types/leaflet": "^1.9.20",

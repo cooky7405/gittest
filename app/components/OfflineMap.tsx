@@ -256,7 +256,7 @@ export default function OfflineMap() {
         console.log("온라인 타일 로딩 완료");
       });
 
-      // 타일 에러 처리 - 줌 18 진단 강화
+      // 타일 에러 처리 - 사용자 친화적 개선
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       localTileLayer.on("tileerror", (e: any) => {
         const currentZoom = leafletMap.getZoom();
@@ -268,17 +268,50 @@ export default function OfflineMap() {
         const x = urlParts[urlParts.length - 2];
         const y = urlParts[urlParts.length - 1].split(".")[0];
 
-        console.log(
-          `❌ 오프라인 타일 없음 (줌 ${roundedZoom}): ${z}/${x}/${y}`
-        );
+        // 개발 환경에서만 상세 로그 출력
+        if (process.env.NODE_ENV === "development") {
+          console.log(
+            `❌ 오프라인 타일 없음 (줌 ${roundedZoom}): ${z}/${x}/${y}`
+          );
 
-        if (roundedZoom === 18) {
-          console.log(`🔍 줌 18 타일 경로: /tiles/${z}/${x}/${y}.png`);
-          console.log(`📍 현재 위치에서 줌 18 타일이 다운로드되지 않았습니다.`);
+          if (roundedZoom === 18) {
+            console.log(`🔍 줌 18 타일 경로: /tiles/${z}/${x}/${y}.png`);
+            console.log(
+              `📍 현재 위치에서 줌 18 타일이 다운로드되지 않았습니다.`
+            );
+          }
         }
 
         // 에러 타일을 투명하게 처리하여 온라인 타일이 보이도록
         e.tile.style.opacity = "0";
+
+        // 첫 번째 타일 에러 시에만 사용자에게 안내
+        if (!sessionStorage.getItem("tile_error_shown")) {
+          sessionStorage.setItem("tile_error_shown", "true");
+
+          // 사용자 친화적 안내 메시지
+          const notification = document.createElement("div");
+          notification.style.cssText = `
+            position: fixed; top: 80px; right: 20px; z-index: 10000;
+            background: #fbbf24; color: #92400e; padding: 12px 16px;
+            border-radius: 8px; border: 1px solid #f59e0b;
+            font-size: 14px; max-width: 300px; box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+          `;
+          notification.innerHTML = `
+            <strong>🗺️ 오프라인 타일 안내</strong><br>
+            일부 지도 타일이 오프라인에 저장되지 않았습니다.<br>
+            <small>💾 다운로드 버튼을 눌러 타일을 저장하세요.</small>
+          `;
+
+          document.body.appendChild(notification);
+
+          // 5초 후 자동 제거
+          setTimeout(() => {
+            if (notification.parentNode) {
+              notification.parentNode.removeChild(notification);
+            }
+          }, 5000);
+        }
       });
 
       // 타일 로드 성공 로깅
