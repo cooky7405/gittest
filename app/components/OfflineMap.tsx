@@ -35,6 +35,10 @@ export default function OfflineMap() {
   } | null>(null);
   const [debugInfo, setDebugInfo] = useState<string>("");
   const [showTileNumbers, setShowTileNumbers] = useState<boolean>(false);
+  const [mouseCoords, setMouseCoords] = useState<{
+    lat: number;
+    lng: number;
+  } | null>(null);
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const [map, setMap] = useState<any>(null);
 
@@ -453,6 +457,20 @@ export default function OfflineMap() {
         setTimeout(() => {
           leafletMap.invalidateSize();
         }, 100);
+      });
+
+      // 마우스 위치 추적 이벤트
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      leafletMap.on("mousemove", (e: any) => {
+        setMouseCoords({
+          lat: e.latlng.lat,
+          lng: e.latlng.lng,
+        });
+      });
+
+      // 마우스가 지도를 벗어날 때
+      leafletMap.on("mouseout", () => {
+        setMouseCoords(null);
       });
 
       // 마커 추가
@@ -1032,6 +1050,34 @@ export default function OfflineMap() {
             >
               ✕
             </button>
+          </div>
+        </div>
+      )}
+
+      {/* 마우스 좌표 표시 (하단 중앙) */}
+      {mouseCoords && (
+        <div className="fixed bottom-4 left-1/2 transform -translate-x-1/2 z-[9997] pointer-events-none">
+          <div className="bg-green-600/95 backdrop-blur-md rounded-lg shadow-2xl border-2 border-green-400 p-2 ring-1 ring-green-500/20">
+            <div className="text-white text-xs">
+              <div className="flex items-center gap-2 mb-1">
+                <span className="text-sm">🎯</span>
+                <span className="font-medium">마우스 위치</span>
+              </div>
+              <div className="flex gap-4 font-mono text-xs">
+                <div className="flex items-center gap-1">
+                  <span className="text-green-100">위도:</span>
+                  <span className="text-white font-bold">
+                    {mouseCoords.lat.toFixed(6)}
+                  </span>
+                </div>
+                <div className="flex items-center gap-1">
+                  <span className="text-green-100">경도:</span>
+                  <span className="text-white font-bold">
+                    {mouseCoords.lng.toFixed(6)}
+                  </span>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       )}
