@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import MapOverlayUI from "./MapOverlayUI";
 
 interface Marker {
   id: number;
@@ -1018,160 +1019,126 @@ export default function OfflineMap() {
   }
 
   return (
-    <div className="w-full h-screen overflow-hidden">
-      {/* 컨트롤 패널 */}
-      <div className="bg-white p-4 shadow-lg z-20 relative border-b">
-        <h1 className="text-2xl font-bold text-gray-800 mb-3">
-          🏙️ 서울 오프라인 지도 시스템
-        </h1>
-
-        <div className="flex gap-4 items-center flex-wrap">
-          {/* 줌 컨트롤 */}
-          <div className="flex items-center gap-2 bg-gray-50 p-2 rounded-lg">
-            <label className="text-sm font-medium">줌:</label>
-            <span className="bg-blue-100 px-2 py-1 rounded text-sm font-mono">
-              {zoom.toFixed(1)}
-            </span>
+    <div className="w-full h-screen overflow-hidden relative">
+      {/* 상태 메시지 (상단 고정) */}
+      {downloadStatus && (
+        <div className="fixed top-4 left-4 right-80 z-[9998] p-3 bg-blue-50/95 backdrop-blur-md border-2 border-blue-300 rounded-lg text-sm shadow-2xl ring-1 ring-blue-500/20">
+          <div className="flex items-start justify-between">
+            <div className="whitespace-pre-line">{downloadStatus}</div>
             <button
-              onClick={handleZoomIn}
-              className="bg-blue-500 hover:bg-blue-600 text-white px-2 py-1 rounded text-sm"
-              title="확대"
+              onClick={() => setDownloadStatus("")}
+              className="ml-2 text-blue-600 hover:text-blue-800"
+              title="닫기"
             >
-              ➕
-            </button>
-            <button
-              onClick={handleZoomOut}
-              className="bg-red-500 hover:bg-red-600 text-white px-2 py-1 rounded text-sm"
-              title="축소"
-            >
-              ➖
-            </button>
-            <button
-              onClick={resetView}
-              className="bg-gray-500 hover:bg-gray-600 text-white px-2 py-1 rounded text-sm"
-              title="초기화"
-            >
-              🏠
+              ✕
             </button>
           </div>
+        </div>
+      )}
 
-          {/* 다운로드 버튼들 */}
-          <div className="flex gap-2 flex-wrap">
-            <button
-              onClick={downloadTiles}
-              disabled={isDownloading}
-              className={`px-3 py-2 rounded-lg text-sm font-medium transition-colors ${
-                isDownloading
-                  ? "bg-gray-400 cursor-not-allowed"
-                  : "bg-green-500 hover:bg-green-600 text-white"
-              }`}
-              title="현재 줌 레벨 ±1 다운로드"
-            >
-              {isDownloading ? "💾 다운로드 중..." : "💾 기본 다운로드"}
-            </button>
+      {/* 다운로드 컨트롤 패널 (좌측 하단) */}
+      <div className="fixed bottom-4 left-4 z-[9998] pointer-events-auto">
+        <div className="bg-white/98 backdrop-blur-md rounded-lg shadow-2xl border-2 border-gray-300 p-3 max-w-sm ring-1 ring-black/5">
+          <div className="text-sm font-medium text-gray-800 mb-3 flex items-center gap-2">
+            <span>📥</span>
+            <span>지도 다운로드</span>
+          </div>
 
-            <button
-              onClick={downloadHighResolutionTiles}
-              disabled={isDownloading}
-              className={`px-3 py-2 rounded-lg text-sm font-medium transition-colors ${
-                isDownloading
-                  ? "bg-gray-400 cursor-not-allowed"
-                  : "bg-blue-500 hover:bg-blue-600 text-white"
-              }`}
-              title="줌 16-18 고해상도 다운로드"
-            >
-              🔍 고해상도 (16-18)
-            </button>
+          <div className="space-y-2">
+            <div className="grid grid-cols-2 gap-2">
+              <button
+                onClick={downloadTiles}
+                disabled={isDownloading}
+                className={`px-2 py-1 rounded text-xs font-medium transition-colors ${
+                  isDownloading
+                    ? "bg-gray-400 cursor-not-allowed"
+                    : "bg-green-500 hover:bg-green-600 text-white"
+                }`}
+                title="현재 줌 레벨 ±1 다운로드"
+              >
+                {isDownloading ? "💾 중..." : "💾 기본"}
+              </button>
+
+              <button
+                onClick={downloadHighResolutionTiles}
+                disabled={isDownloading}
+                className={`px-2 py-1 rounded text-xs font-medium transition-colors ${
+                  isDownloading
+                    ? "bg-gray-400 cursor-not-allowed"
+                    : "bg-blue-500 hover:bg-blue-600 text-white"
+                }`}
+                title="줌 16-18 고해상도 다운로드"
+              >
+                🔍 고해상도
+              </button>
+            </div>
 
             <button
               onClick={downloadFullRange}
               disabled={isDownloading}
-              className={`px-3 py-2 rounded-lg text-sm font-medium transition-colors ${
+              className={`w-full px-2 py-1 rounded text-xs font-medium transition-colors ${
                 isDownloading
                   ? "bg-gray-400 cursor-not-allowed"
                   : "bg-purple-500 hover:bg-purple-600 text-white"
               }`}
               title="줌 10-18 전체 레벨 다운로드"
             >
-              🗺️ 전체 레벨 (10-18)
+              🗺️ 전체 레벨
             </button>
 
             <button
               onClick={downloadSeoulComplete}
               disabled={isDownloading}
-              className={`px-3 py-2 rounded-lg text-sm font-medium transition-colors ${
+              className={`w-full px-2 py-1 rounded text-xs font-medium transition-colors ${
                 isDownloading
                   ? "bg-gray-400 cursor-not-allowed"
                   : "bg-orange-500 hover:bg-orange-600 text-white"
               }`}
               title="서울 전체 지역 완전 다운로드 (모든 줌 레벨)"
             >
-              🏙️ 서울 전체 완전 다운로드
+              🏙️ 서울 완전
             </button>
 
             <button
               onClick={downloadCurrentViewZoom18}
               disabled={isDownloading}
-              className={`px-3 py-2 rounded-lg text-sm font-medium transition-colors ${
+              className={`w-full px-2 py-1 rounded text-xs font-medium transition-colors ${
                 isDownloading
                   ? "bg-gray-400 cursor-not-allowed"
                   : "bg-red-500 hover:bg-red-600 text-white"
               }`}
               title="현재 화면 줌 18 타일 다운로드 (줌 18에서만 사용 가능)"
             >
-              📍 현재 화면 줌 18
+              📍 현재 화면 Z18
             </button>
-
-            <button
-              onClick={toggleTileNumbers}
-              className={`px-3 py-2 rounded-lg text-sm font-medium transition-colors ${
-                showTileNumbers
-                  ? "bg-yellow-500 hover:bg-yellow-600 text-white"
-                  : "bg-gray-500 hover:bg-gray-600 text-white"
-              }`}
-              title="타일 번호 표시/숨김"
-            >
-              {showTileNumbers ? "🔢 타일 번호 숨김" : "🔢 타일 번호 표시"}
-            </button>
-          </div>
-
-          {/* 상태 정보 */}
-          <div className="text-sm text-gray-600 flex gap-4 flex-wrap">
-            <span>📍 마커: {mapData.markers.length}개</span>
-            {downloadedTiles > 0 && (
-              <span>💾 저장된 타일: {downloadedTiles}개</span>
-            )}
-            {debugInfo && <span className="text-blue-600">🔍 {debugInfo}</span>}
-            {currentCenter && (
-              <span className="text-green-600">
-                📌 현재 중심: {currentCenter.lat.toFixed(4)},{" "}
-                {currentCenter.lng.toFixed(4)}
-              </span>
-            )}
-            {Math.round(zoom) === 18 && (
-              <span className="text-red-600 font-bold">
-                🎯 줌 18 활성 - 이동 시 F12 콘솔에서 타일 상태 확인
-              </span>
-            )}
           </div>
         </div>
-
-        {/* 상태 메시지 */}
-        {downloadStatus && (
-          <div className="mt-2 p-2 bg-blue-50 border border-blue-200 rounded text-sm">
-            {downloadStatus}
-          </div>
-        )}
       </div>
 
-      {/* 지도 영역 */}
+      {/* 메인 지도 오버레이 UI (우측 상단) */}
+      <MapOverlayUI
+        mapInfo={{
+          zoom: zoom,
+          center: currentCenter,
+          markers: mapData?.markers.length || 0,
+          downloadedTiles: downloadedTiles,
+          debugInfo: debugInfo,
+        }}
+        onZoomIn={handleZoomIn}
+        onZoomOut={handleZoomOut}
+        onResetView={resetView}
+        showTileNumbers={showTileNumbers}
+        onToggleTileNumbers={toggleTileNumbers}
+      />
+
+      {/* 지도 영역 (전체 화면) */}
       <div
         ref={mapRef}
-        className="w-full h-[calc(100vh-140px)] relative"
+        className="w-full h-full relative z-0"
         style={{
-          minHeight: "400px",
+          minHeight: "100vh",
           maxWidth: "100vw",
-          maxHeight: "calc(100vh - 140px)",
+          maxHeight: "100vh",
           overflow: "hidden",
           border: "none",
           outline: "none",
